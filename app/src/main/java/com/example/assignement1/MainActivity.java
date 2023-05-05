@@ -2,59 +2,56 @@ package com.example.assignement1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.res.Resources;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
+import com.example.assignement1.model.Element;
+import com.example.assignement1.model.ElementFactory;
+import com.example.assignement1.model.IElement;
 
-    private ImageView periodicTable;
-    private Matrix matrix = new Matrix();
-    private float[] matrixValues = new float[9];
-    private float downX, downY;
-    private float lastTranslateX, lastTranslateY;
-    private float scaleFactor = 1.0f;
-    private static final float MIN_SCALE_FACTOR = 1.0f;
-    private static final float MAX_SCALE_FACTOR = 4.0f;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+    ElementFactory factory = new ElementFactory();
+    IElement obj = factory.getModel();
+    List<Element> elements = obj.getAllElements();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        periodicTable = findViewById(R.id.periodicTable);
-        periodicTable.setOnTouchListener(this);
-        periodicTable.setScaleType(ImageView.ScaleType.MATRIX);
+        for (Element element : elements) {
+            String elementId = "txt_" + element.getSymbol().toLowerCase();
+            int resId = getResources().getIdentifier(elementId, "id", getPackageName());
+            Button button = findViewById(resId);
+            if (button != null) {
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String symbol = element.getSymbol();
+                        String name = element.getName();
+                        int atomicNumber = element.getAtomicNum();
+                        double atomicMass = element.getAtomicMass();
+                        String group = element.getChemicalGroup();
+                        String message = "Name: " + name + "\n" +
+                                "Symbol: " + symbol + "\n" +
+                                "Atomic Number: " + atomicNumber + "\n" +
+                                "Atomic Mass: " + atomicMass + "\n" +
+                                "Chemical Group: " + group;
+                        // Show the element information
+                        Toast.makeText(MainActivity.this, message,Toast.LENGTH_LONG).show();
 
-
-
-    }
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                downX = x;
-                downY = y;
-                lastTranslateX = 0f;
-                lastTranslateY = 0f;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float dx = x - downX;
-                float dy = y - downY;
-                matrix.getValues(matrixValues);
-                float translatedX = matrixValues[Matrix.MTRANS_X] + dx - lastTranslateX;
-                float translatedY = matrixValues[Matrix.MTRANS_Y] + dy - lastTranslateY;
-                matrix.setTranslate(translatedX, translatedY);
-                periodicTable.setImageMatrix(matrix);
-                lastTranslateX = dx;
-                lastTranslateY = dy;
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
+                    }
+                });
+            }
         }
-        return true;
+
     }
 }

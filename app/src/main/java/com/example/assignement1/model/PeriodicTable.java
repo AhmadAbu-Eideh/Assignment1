@@ -126,6 +126,9 @@ public class PeriodicTable implements IElement {
         elements.add(new Element("Tennessine", 117, "Ts", 294.00, "Unknown Chemical Properties"));
         elements.add(new Element("Oganesson", 118, "Og", 294.00, "Unknown Chemical Properties"));
     }
+    public List<Element> getAllElements() {
+        return elements;
+    }
     public List<Element> getName(String name)
     {
         ArrayList<Element> names=new ArrayList<>();
