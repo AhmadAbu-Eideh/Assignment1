@@ -1,5 +1,7 @@
 package com.example.assignement1.model;
 
+import com.google.gson.Gson;
+
 public class Element {
     private String name;
     private int atomicNum;
@@ -7,12 +9,17 @@ public class Element {
     private double atomicMass;
     private String chemicalGroup;
 
+
     public Element(String name, int atomicNum, String symbol, double atomicMass, String chemicalGroup) {
         this.name = name;
         this.atomicNum = atomicNum;
         this.symbol = symbol;
         this.atomicMass = atomicMass;
         this.chemicalGroup = chemicalGroup;
+    }
+    public static Element fromJson(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, Element.class);
     }
 
     public String getName() {
@@ -54,4 +61,5 @@ public class Element {
     public void setChemicalGroup(String chemicalGroup) {
         this.chemicalGroup = chemicalGroup;
     }
+
 }

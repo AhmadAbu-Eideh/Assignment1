@@ -1,9 +1,17 @@
 package com.example.assignement1.model;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import com.google.gson.Gson;
 
 public class PeriodicTable implements IElement {
+    private SharedPreferences preferences;
+    Gson gson=new Gson();
+
     private ArrayList<Element> elements=new ArrayList<>();
     public PeriodicTable()
     {
@@ -126,58 +134,113 @@ public class PeriodicTable implements IElement {
         elements.add(new Element("Tennessine", 117, "Ts", 294.00, "Unknown Chemical Properties"));
         elements.add(new Element("Oganesson", 118, "Og", 294.00, "Unknown Chemical Properties"));
     }
-    public List<Element> getAllElements() {
+    public PeriodicTable(Context context)
+    {
+        preferences=context.getSharedPreferences("periodic_table",context.MODE_PRIVATE);
+        String json=gson.toJson(elements);//converting the ArrayList to json string
+        SharedPreferences.Editor editor=preferences.edit();
+        editor.putString("elements",json);//saving the json string to shared preference
+        editor.apply();
+    }
+
+    public List<Element> getAllElements(SharedPreferences preferences) {
+        List<Element> elements = new ArrayList<>();
+
+        Map<String, ?> allEntries = preferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                String elementJson = (String) entry.getValue();
+                Element element = Element.fromJson(elementJson);
+                elements.add(element);
+            }
+        }
+
         return elements;
     }
     public List<Element> getName(String name)
     {
-        ArrayList<Element> names=new ArrayList<>();
-        for (Element e:elements) {
-            if(e.getName().equals(name)) {
-                names.add(e);
+        List<Element> matchingElements = new ArrayList<>();
+
+        Map<String, ?> allEntries = preferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                String elementJson = (String) entry.getValue();
+                Element element = Element.fromJson(elementJson);
+                if (element.getName().equals(name)) {
+                    matchingElements.add(element);
+                }
             }
         }
-        return names;
+
+        return matchingElements;
     }
     public List<Element> getAtomicNumber(int num)
     {
-        ArrayList<Element> nums=new ArrayList<>();
-        for (Element e:elements) {
-            if(e.getAtomicNum()==num) {
-                nums.add(e);
+        List<Element> matchingElements = new ArrayList<>();
+
+        Map<String, ?> allEntries = preferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                String elementJson = (String) entry.getValue();
+                Element element = Element.fromJson(elementJson);
+                if (element.getAtomicNum() == num) {
+                    matchingElements.add(element);
+                }
             }
         }
-        return nums;
+
+        return matchingElements;
     }
     public List<Element> getSymbol(String Sym)
     {
-        ArrayList<Element> Symbols=new ArrayList<>();
-        for (Element e:elements) {
-            if(e.getSymbol().equals(Sym)) {
-                Symbols.add(e);
+        List<Element> matchingElements = new ArrayList<>();
+
+        Map<String, ?> allEntries = preferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                String elementJson = (String) entry.getValue();
+                Element element = Element.fromJson(elementJson);
+                if (element.getSymbol().equals(Sym)) {
+                    matchingElements.add(element);
+                }
             }
         }
-        return Symbols;
+
+        return matchingElements;
     }
     public List<Element> getAtomicMass(double AtomicMass)
     {
-        ArrayList<Element> AtomicNums=new ArrayList<>();
-        for (Element e:elements) {
-            if(e.getAtomicMass()==AtomicMass) {
-                AtomicNums.add(e);
+        List<Element> matchingElements = new ArrayList<>();
+
+        Map<String, ?> allEntries = preferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                String elementJson = (String) entry.getValue();
+                Element element = Element.fromJson(elementJson);
+                if (element.getAtomicMass() == AtomicMass) {
+                    matchingElements.add(element);
+                }
             }
         }
-        return AtomicNums;
+
+        return matchingElements;
     }
     public List<Element> getGroup(String Group)
     {
-        ArrayList<Element> ChemicalGroup=new ArrayList<>();
-        for (Element e:elements) {
-            if(e.getName().equals(Group)) {
-                ChemicalGroup.add(e);
+        List<Element> matchingElements = new ArrayList<>();
+
+        Map<String, ?> allEntries = preferences.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                String elementJson = (String) entry.getValue();
+                Element element = Element.fromJson(elementJson);
+                if (element.getChemicalGroup().equals(Group)) {
+                    matchingElements.add(element);
+                }
             }
         }
-        return ChemicalGroup;
+
+        return matchingElements;
     }
 
 

@@ -1,57 +1,51 @@
 package com.example.assignement1;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Matrix;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
+import android.preference.PreferenceManager;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.assignement1.model.Element;
+import com.example.assignement1.model.ElementAdapter;
 import com.example.assignement1.model.ElementFactory;
 import com.example.assignement1.model.IElement;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    ElementFactory factory = new ElementFactory();
-    IElement obj = factory.getModel();
-    List<Element> elements = obj.getAllElements();
+    private SharedPreferences preferences;
+    private ElementFactory factory;
+    private IElement obj;
+    private List<Element> elements;
+    private ElementAdapter adapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        for (Element element : elements) {
-            String elementId = "txt_" + element.getSymbol().toLowerCase();
-            int resId = getResources().getIdentifier(elementId, "id", getPackageName());
-            Button button = findViewById(resId);
-            if (button != null) {
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String symbol = element.getSymbol();
-                        String name = element.getName();
-                        int atomicNumber = element.getAtomicNum();
-                        double atomicMass = element.getAtomicMass();
-                        String group = element.getChemicalGroup();
-                        String message = "Name: " + name + "\n" +
-                                "Symbol: " + symbol + "\n" +
-                                "Atomic Number: " + atomicNumber + "\n" +
-                                "Atomic Mass: " + atomicMass + "\n" +
-                                "Chemical Group: " + group;
-                        // Show the element information
-                        Toast.makeText(MainActivity.this, message,Toast.LENGTH_LONG).show();
-
-                    }
-                });
-            }
-        }
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        factory = new ElementFactory();
+        obj = factory.getModel();
+        elements = obj.getAllElements(preferences);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 19));
+        adapter = new ElementAdapter(elements, getButtonIds());
+        recyclerView.setAdapter(adapter);
 
     }
+    private int[] getButtonIds() {
+        int[] buttonIds = new int[elements.size()];
+        for (int i = 0; i < elements.size(); i++) {
+            String elementId = "txt_" + elements.get(i).getSymbol().toLowerCase();
+            int resId = getResources().getIdentifier(elementId, "id", getPackageName());
+            buttonIds[i] = resId;
+        }
+        return buttonIds;
+    }
 }
+

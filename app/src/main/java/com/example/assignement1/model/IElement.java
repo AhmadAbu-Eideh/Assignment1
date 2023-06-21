@@ -1,5 +1,7 @@
 package com.example.assignement1.model;
 
+import android.content.SharedPreferences;
+
 import java.util.List;
 
 public interface IElement {
@@ -9,5 +11,5 @@ public interface IElement {
     public List<Element> getAtomicMass(double AtomicMass);
     public List<Element> getGroup(String Group);
 
-    List<Element> getAllElements();
+    List<Element> getAllElements(SharedPreferences preferences);
 }
